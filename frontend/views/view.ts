@@ -1,6 +1,8 @@
 import { MobxLitElement } from '@adobe/lit-mobx';
 import { applyTheme } from 'Frontend/generated/theme';
 import { autorun, IAutorunOptions, IReactionDisposer, IReactionOptions, IReactionPublic, reaction } from 'mobx';
+import { state } from 'lit-element';
+import { use } from 'lit-translate';
 
 export class MobxElement extends MobxLitElement {
   private disposers: IReactionDisposer[] = [];
@@ -36,14 +38,29 @@ export class MobxElement extends MobxLitElement {
   }
 }
 
-export class View extends MobxElement {
+class TranslatableElement extends MobxElement {
+  @state()
+  private hasLoadedStrings = false;
+
+  shouldUpdate(changedProperties: any) {
+    return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    use('en').then(() => (this.hasLoadedStrings = true));
+  }
+}
+
+export class View extends TranslatableElement {
   createRenderRoot() {
     // Do not use a shadow root
     return this;
   }
 }
 
-export class Layout extends MobxElement {
+export class Layout extends TranslatableElement {
   connectedCallback() {
     super.connectedCallback();
     applyTheme(this.shadowRoot!);

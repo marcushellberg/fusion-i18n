@@ -6,6 +6,7 @@ import '@vaadin/vaadin-context-menu';
 import '@vaadin/vaadin-tabs';
 import '@vaadin/vaadin-tabs/vaadin-tab';
 import { customElement, html } from 'lit-element';
+import { use } from 'lit-translate';
 import { router } from '../index';
 import { views } from '../routes';
 import { appStore } from '../stores/app-store';
@@ -25,6 +26,12 @@ export class MainLayout extends Layout {
         <header slot="navbar" theme="dark" class="sidemenu-header">
           <vaadin-drawer-toggle></vaadin-drawer-toggle>
           <h1>${appStore.currentViewTitle}</h1>
+
+          <select @change=${this.changeLanguage}>
+            <option value="en">English</option>
+            <option value="fi">Finnish</option>
+            <option value="sv">Swedish</option>
+          </select>
         </header>
 
         <div slot="drawer" class="sidemenu-menu">
@@ -47,6 +54,10 @@ export class MainLayout extends Layout {
         <slot></slot>
       </vaadin-app-layout>
     `;
+  }
+
+  changeLanguage(e: Event) {
+    use((e.target as HTMLSelectElement).value);
   }
 
   connectedCallback() {
